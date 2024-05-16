@@ -10,61 +10,78 @@ from tasks import CustomTasks
 # Install duckduckgo-search for this example:
 # !pip install -U duckduckgo-search
 
-from langchain.tools import DuckDuckGoSearchRun
+from langchain_community.tools import DuckDuckGoSearchRun
 
 search_tool = DuckDuckGoSearchRun()
 
 os.environ["OPENAI_API_KEY"] = config("OPENAI_API_KEY")
-os.environ["OPENAI_ORGANIZATION"] = config("OPENAI_ORGANIZATION_ID")
 
 # This is the main class that you will use to define your custom crew.
 # You can define as many agents and tasks as you want in agents.py and tasks.py
 
 
 class CustomCrew:
-    def __init__(self, var1, var2):
-        self.var1 = var1
-        self.var2 = var2
+  def __init__(self, instructions, base_folder):
+    self.instructions = instructions
+    self.base_folder = base_folder
 
-    def run(self):
-        # Define your custom agents and tasks in agents.py and tasks.py
-        agents = CustomAgents()
-        tasks = CustomTasks()
+  def run(self):
+    agents = CustomAgents()
+    tasks = CustomTasks()
 
-        # Define your custom agents and tasks here
-        custom_agent_1 = agents.agent_1_name()
-        custom_agent_2 = agents.agent_2_name()
+    senior_engineer_agent = agents.senior_engineer_agent()
+    qa_engineer_agent = agents.qa_engineer_agent()
+    repository_manager_agent = agents.repository_manager_agent()
+    documentation_officer_agent = agents.documentation_officer_agent()
+    devsecops_agent = agents.devsecops_agent()
 
-        # Custom tasks include agent name and variables as input
-        custom_task_1 = tasks.task_1_name(
-            custom_agent_1,
-            self.var1,
-            self.var2,
-        )
+    initial_website_task = tasks.code_initial_website(
+      senior_engineer_agent,
+      self.instructions,
+      self.base_folder,
+    )
 
-        custom_task_2 = tasks.task_2_name(
-            custom_agent_2,
-        )
+    add_unit_tests_task = tasks.add_unit_tests(
+      qa_engineer_agent,
+      self.instructions,
+    )
 
-        # Define your custom crew here
-        crew = Crew(
-            agents=[custom_agent_1, custom_agent_2],
-            tasks=[custom_task_1, custom_task_2],
-            verbose=True,
-        )
+    qa_website_task = tasks.qa_code(
+      qa_engineer_agent,
+    )
 
-        result = crew.kickoff()
-        return result
+    add_readme_task = tasks.add_readme(
+      documentation_officer_agent,
+      self.instructions,
+    )
+
+    create_dev_sec_ops_files_task = tasks.create_dev_sec_ops_files(
+      devsecops_agent,
+      self.base_folder,
+    )
+
+    create_files_task = tasks.create_files(
+      repository_manager_agent,
+    )
+
+    crew = Crew(
+      agents=[senior_engineer_agent, qa_engineer_agent, documentation_officer_agent, devsecops_agent, qa_engineer_agent, repository_manager_agent],
+      tasks=[initial_website_task, add_unit_tests_task, add_readme_task, create_dev_sec_ops_files_task, qa_website_task, create_files_task],
+      verbose=True,
+    )
+
+    result = crew.kickoff()
+    return result
 
 
 # This is the main function that you will use to run your custom crew.
 if __name__ == "__main__":
-    print("## Welcome to Crew AI Template")
+    print("## Let's create a website!")
     print("-------------------------------")
-    var1 = input(dedent("""Enter variable 1: """))
-    var2 = input(dedent("""Enter variable 2: """))
+    base_folder = input(dedent("""Base Folder for the files: """))
+    instructions = input(dedent("""Instructions for the website, define as much as possible: """))
 
-    custom_crew = CustomCrew(var1, var2)
+    custom_crew = CustomCrew(instructions, base_folder)
     result = custom_crew.run()
     print("\n\n########################")
     print("## Here is you custom crew run result:")

@@ -6,36 +6,154 @@ from textwrap import dedent
 # You can define as many tasks as you want.
 # You can also define custom agents in agents.py
 class CustomTasks:
-    def __tip_section(self):
-        return "If you do your BEST WORK, I'll give you a $10,000 commission!"
+  def __tip_section(self):
+    return "If you do your BEST WORK, I'll give you a $10,000 commission!"
 
-    def task_1_name(self, agent, var1, var2):
-        return Task(
-            description=dedent(
-                f"""
-            Do something as part of task 1
-            
-            {self.__tip_section()}
-    
-            Make sure to use the most recent data as possible.
-    
-            Use this variable: {var1}
-            And also this variable: {var2}
+  def code_initial_website(self, agent, instructions, base_folder):
+    return Task(
+      description=dedent(
+        f"""
+          {self.__tip_section()}
+
+          You will code a website using node, nextjs, nestjs, typescript, tailwind, jest and react.
+          Here are more instructions on what kind of website to build:
+
+          Instructions
+          ------------
+
+          {instructions}
         """
-            ),
-            agent=agent,
-        )
+      ),
+      expected_output=dedent(
+          f"""
+            Base folder for all the files should be on {base_folder}
+            Your final output should be in array workable string json format like below:
+            [{{ "filePath": "...", "content": "..." }}, {{ "filePath": "...", "content": "..." }}, ...]
 
-    def task_2_name(self, agent):
-        return Task(
-            description=dedent(
-                f"""
-            Take the input from task 1 and do something with it.
-                                       
-            {self.__tip_section()}
+            Make sure to not add anything around, just the string json array.
+            Make sure your output is stringified, please include the new lines in the stringified version.
+          """
+      ),
+      agent=agent,
+    )
 
-            Make sure to do something else.
+  def add_unit_tests(self, agent, instructions):
+    return Task(
+      description=dedent(
+        f"""
+          You are helping create a website using javascript, these are the instructions:
+
+          Instructions
+          ------------
+          {instructions}
+
+          Using the code you got, add unit testings the the files that needs unit testings.
         """
-            ),
-            agent=agent,
-        )
+      ),
+      expected_output=dedent(
+          f"""
+            Your final output should be in array workable string json array format like below:
+            [{{ "filePath": "...", "content": "..." }}, {{ "filePath": "...", "content": "..." }}, ...]
+
+            Make sure you include all the files appending your generated unit tests.
+            Make sure to not add anything around, just the string json array.
+            Make sure your output is stringified, please include the new lines in the stringified version.
+          """
+      ),
+      agent=agent,
+    )
+  
+  def add_readme(self, agent, instructions):
+    return Task(
+      description=dedent(
+        f"""
+          You are helping create a website using javascript, these are the instructions:
+
+          Instructions
+          ------------
+          {instructions}
+
+          Using the code you got, make a README file on essential things like running the project.
+        """
+      ),
+      expected_output=dedent(
+          f"""
+            Your final output should be in array workable string json array format like below:
+            [{{ "filePath": "...", "content": "..." }}, {{ "filePath": "...", "content": "..." }}, ...]
+
+            Make sure you include all the files from the previous agent in the return appending your generated README file.
+            Make sure to not add anything around, just the string json array.
+            Make sure your output is stringified, please include the new lines in the stringified version.
+          """
+      ),
+      agent=agent,
+    )
+  
+  def create_dev_sec_ops_files(self, agent, base_folder):
+    return Task(
+      description=dedent(
+        f"""
+          You are helping create a website using javascript.
+
+          Using the code you got in json format, make the necessary yaml files to run this application in Google App Engine.
+          The yaml files should have different environments for dev, staging, and prod.
+          You will also create a on-pull-request-dev.yaml (file name will depend on environment) file inside the appengine folder of the project,
+          which will be used as a Cloud Build configuration file in Google App Engine.
+          Deployment yaml files like app-dev.yaml should just be in the root folder. Cloud build configuration files should only the ones inside the appengine folder.
+          This should be the base folder of the files {base_folder}
+        """
+      ),
+      expected_output=dedent(
+          f"""
+            Your final output should be in array workable string json array format like below:
+            [{{ "filePath": "...", "content": "..." }}, {{ "filePath": "...", "content": "..." }}, ...]
+
+            Make sure you include all the files from the previous agent in the return appending your generated yaml files to the json array.
+            Make sure to not add anything around, just the string json array.
+            Make sure your output is stringified, please include the new lines in the stringified version.
+          """
+      ),
+      agent=agent,
+    )
+  
+  def qa_code(self, agent):
+    return Task(
+      description=dedent(
+        f"""
+          You are helping create a website using javascript.
+
+          Using the code you got, check for errors. Check for logic errors,
+          syntax errors, missing imports, variable declarations, mismatched brackets,
+          and security vulnerabilities.
+        """
+      ),
+      expected_output=dedent(
+          f"""
+            Your final output should be in array workable string json array format like below:
+            [{{ "filePath": "...", "content": "..." }}, {{ "filePath": "...", "content": "..." }}, ...]
+
+            Make sure you include all the files and just updating the files you feel like needs updating in the json array.
+            Make sure to not add anything around, just the string json array.
+            Make sure your output is stringified, please include the new lines in the stringified version.
+          """
+      ),
+      agent=agent,
+    )
+  
+  def create_files(self, agent):
+    return Task(
+      description=dedent(
+        f"""
+          You are helping create a website using javascript.
+
+          Using the json you got, you create files base on their file paths and content.
+          You pass the json immediately to the tool, if the json string is not parsable, please fix it.
+        """
+      ),
+      expected_output=dedent(
+          f"""
+            You use the tools given to you to create files.
+          """
+      ),
+      agent=agent,
+    )
