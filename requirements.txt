@@ -1,0 +1,4 @@
+crewai==0.30.11
+langchain_community==0.0.38
+langchain_openai==0.1.7
+python-decouple==3.8
