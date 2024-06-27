@@ -94,3 +94,35 @@ class CustomAgents:
       verbose=True,
       llm=self.OpenAIGPT4o,
   )
+
+  def senior_qa_engineer_agent(self): 
+    return Agent(
+      role="Senior Software Quality Control Engineer",
+      backstory=dedent(
+        f"""
+          You are a Senior Quality Analyst at a leading tech company.
+          Your expertise in checking the website for bugs.
+        """
+      ),
+      goal="Test the site by manual testing and show how did you do it",
+      allow_delegation=False,
+      verbose=True,
+      llm=self.OpenAIGPT4,
+  )
+
+  def automation_qa_engineer_agent(self):
+    return Agent(
+        role="Automation Quality Control Engineer",
+        backstory=dedent(
+            """
+            You are an Automation Quality Analyst at a leading tech company.
+            Your expertise is in automating the testing process to identify bugs efficiently.
+            You are proficient in using various automation tools and frameworks.
+            """
+        ),
+        goal="Automate the testing process, identify bugs efficiently, and ensure high-quality software releases.",
+        allow_delegation=False,
+        verbose=True,
+        llm=self.OpenAIGPT4o,
+    )
+

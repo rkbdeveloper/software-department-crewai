@@ -157,3 +157,56 @@ class CustomTasks:
       ),
       agent=agent,
     )
+
+  def qa_website(self, agent):
+    return Task(
+      description=dedent(
+        f"""
+          You are helping test a website manually.
+
+          Using the website you got, perform manual QA testing. Check for functionality issues,
+          user interface inconsistencies, broken links, responsiveness on different devices,
+          and overall user experience. Ensure that all features work as expected and report any bugs or issues found.
+        """
+      ),
+      expected_output=dedent(
+          f"""
+            Your final output should be a detailed report in array workable string json array format like below:
+            [{{ "issue": "...", "description": "...", "steps_to_reproduce": "...", "severity": "..." }}, ...]
+
+            Make sure to not add anything around, just the string json array.
+            Make sure your output is stringified, please include the new lines in the stringified version.
+          """
+      ),
+      agent=agent,
+    )
+
+  def automated_testing_playwright(self, agent, instructions, base_folder):
+    return Task(
+      description=dedent(
+        f"""
+         You are helping create automated tests for a website using Playwright.
+
+          Instructions
+          ------------
+          {instructions}
+
+          Using the code you got, write automated tests for the website. Ensure that the tests cover critical functionalities,
+          user interface elements, and responsiveness on different devices (minimum of 3 devices). The tests should be written in a way that they can be
+          easily run and maintained and should include all necessary files(i.e. package.json) for execution. like 
+        """
+      ),
+      expected_output=dedent(
+          f"""
+            Base folder for all the files should be on {base_folder}
+            Your final output should be in array workable string json array format like below:
+            [{{ "filePath": "...", "content": "..." }}, {{ "filePath": "...", "content": "..." }}, ...]
+
+            Make sure you include all the files appending your generated Playwright tests.
+            Make sure that the file name have spec.
+            Make sure to not add anything around, just the string json array.
+            Make sure your output is stringified, please include the new lines in the stringified version.
+          """
+      ),
+      agent=agent,
+    )
